@@ -4,9 +4,25 @@ const axios = require('axios');
 const { Configuration, OpenAIApi } = require("openai");
 require('dotenv').config();
 const app = express().use(body_parser.json());
+const cors = require('cors');
+
+
 const token = process.env.TOKEN;
 const mytoken=process.env.MYTOKEN;
 const PORT = process.env.PORT || 8800;
+
+app.use(
+  cors({
+    origin: [
+      'http://localhost:3000',
+    
+    ],
+    credentials: true,
+  })
+);
+
+
+
 app.get("/webhook",(req,res)=>{
   let mode = req.query["hub.mode"];
   let challenge = req.query["hub.challenge"];
