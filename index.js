@@ -61,6 +61,42 @@ app.post("/webhook",async (req,res) =>{
   }
 })
 
+app.post('/send-message', async (req, res) => {
+  try {
+    const { phone_no_id, from, text, accessToken } = req.body;
+
+    const response = await axios.post(
+      `https://graph.facebook.com/v16.0/${phone_no_id}/messages?access_token=${accessToken}`,
+      {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: from,
+        type: 'text',
+        text: {
+          preview_url: false,
+          body: text,
+        },
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // Check if the Facebook Graph API request was successful
+    if (response.status === 200) {
+      res.sendStatus(200);
+    } else {
+      console.error('Facebook Graph API request failed:', response.statusText);
+      res.sendStatus(500);
+    }
+  } catch (error) {
+    console.error('Error handling Facebook Graph API request:', error);
+    res.sendStatus(500);
+  }
+});
+
 app.get('/', (req, res) => {
     res.send(`
 
