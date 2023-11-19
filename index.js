@@ -9,7 +9,6 @@ let  string = "you are a novigo solution employee and you reply people to know a
 let msg = ""
 const token = process.env.TOKEN;
 const mytoken=process.env.MYTOKEN;
-console.log(token)
 const configuration = new Configuration({
     apiKey: process.env.OPEN_API,
 });
@@ -102,10 +101,22 @@ app.post("/webhook",async (req,res) =>{
 
 
 
-app.get("/",  (req, res) => {
- 
-    res.status(200).send("response + res");
+app.get('/', (req, res) => {
+    res.send(`
+
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>My Backend Server</title>
+        </head>
+        <body>
+          <h1>Welcome to my backend server!</h1>
+          <p>Backend server is running!</p>
+        </body>
+      </html>
+    `);
 });
+
 
 
 // app.post("/message", async (req, res) => {
