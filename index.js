@@ -5,15 +5,7 @@ const { Configuration, OpenAIApi } = require("openai");
 require('dotenv').config();
 const app = express().use(body_parser.json());
 
-
-
-app.listen(8800 || process.env.PORT,()=>{
-    console.log("webhook is listening")
-});
-
-
-
-
+const PORT = process.env.PORT || 8800;
 
 
 app.get('/', (req, res) => {
@@ -31,6 +23,11 @@ app.get('/', (req, res) => {
       </html>
     `);
 });
+
+app.listen(PORT, () => {
+  console.log('Backend server is running!');
+});
+
 
 
 
