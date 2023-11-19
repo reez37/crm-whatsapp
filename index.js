@@ -26,6 +26,41 @@ app.get("/webhook",(req,res)=>{
   
 });
 
+app.post("/webhook",async (req,res) =>{
+  let body_param = req.body;
+  console.log("posting")
+  if(body_param.object){
+      if(body_param.entry ){
+              let phone_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
+              let from = body_param.entry[0].changes[0].value.messages[0].from;
+              let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
+              
+         
+             
+              axios({
+                  method:"POST",
+                  url:"https://graph.facebook.com/v16.0/"+phone_no_id+"/messages?access_token="+token,
+                  data:{
+                      "messaging_product": "whatsapp",    
+                      "recipient_type": "individual",
+                      "to": from,
+                      "type": "text",
+                      "text": {
+                          "preview_url": false,
+                          "body": "bi"
+                      },
+                      headers:{
+                          "Content-Type":"application/json"
+                      }
+                  }
+              });
+              res.sendStatus(200);
+          }else{
+              res.sendStatus(404);
+          }
+  }
+})
+
 app.get('/', (req, res) => {
     res.send(`
 
