@@ -36,6 +36,7 @@ app.get("/webhook",(req,res)=>{
             console.log("reez is on")
         }else{
             res.status(400)
+            console.log("reez is off")
         }
     }
 
