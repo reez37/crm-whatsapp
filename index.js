@@ -51,7 +51,7 @@ app.post("/webhook",async (req,res) =>{
               let from = body_param.entry[0].changes[0].value.messages[0].from;
               let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
               
-         
+         console.log(from)
              
               axios({
                   method:"POST",
@@ -82,11 +82,11 @@ app.post('/send-message', async (req, res) => {
     const { phone_no_id, from, text, accessToken } = req.body;
 
     const response = await axios.post(
-      `https://graph.facebook.com/v16.0/${phone_no_id}/messages?access_token=${accessToken}`,
+      `https://graph.facebook.com/v16.0/163287616872174/messages?access_token=`+token,
       {
         messaging_product: 'whatsapp',
         recipient_type: 'individual',
-        to: from,
+        to: 919538340789,
         type: 'text',
         text: {
           preview_url: false,
@@ -104,11 +104,11 @@ app.post('/send-message', async (req, res) => {
     if (response.status === 200) {
       res.sendStatus(200);
     } else {
-      console.error('Facebook Graph API request failed:', response.statusText);
+      console.error('Facebook Graph API request failed:');
       res.sendStatus(500);
     }
   } catch (error) {
-    console.error('Error handling Facebook Graph API request:', error);
+    console.error('Error handling Facebook Graph API request:');
     res.sendStatus(500);
   }
 });
