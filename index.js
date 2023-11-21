@@ -95,7 +95,7 @@ app.post('/send-message', async (req, res) => {
       {
         messaging_product: 'whatsapp',
         recipient_type: 'individual',
-        to: 919538340789,
+        to: 918495847133,
         type: 'text',
         text: {
           preview_url: false,
