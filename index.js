@@ -1,25 +1,42 @@
 const express = require('express');
-const body_parser =require('body-parser');
+const body_parser = require('body-parser');
 const axios = require('axios');
-const { Configuration, OpenAIApi } = require("openai");
+const { Configuration, OpenAIApi } = require('openai');
 require('dotenv').config();
 const app = express().use(body_parser.json());
 const cors = require('cors');
-
+const http = require('http').createServer(app);
+const io = require('socket.io')(http); // Import Socket.IO and set up with the HTTP server
 
 const token = process.env.TOKEN;
-const mytoken=process.env.MYTOKEN;
+const mytoken = process.env.MYTOKEN;
 const PORT = process.env.PORT || 8800;
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-    
-    ],
+    origin: ['http://localhost:3000'],
     credentials: true,
   })
 );
+
+let users = [];
+
+const addUser = (userId, socketId) => {
+  !users.some((user) => user.userId === userId) &&
+    users.push({ userId, socketId });
+};
+
+const removeUser = (socketId) => {
+  users = users.filter((user) => user.socketId !== socketId);
+};
+
+const getUser = (userId) => {
+  return users.find((user) => user.userId === userId);
+};
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+});
 
 
 
@@ -42,40 +59,27 @@ app.get("/webhook",(req,res)=>{
   
 });
 
-app.post("/webhook",async (req,res) =>{
+app.post('/webhook', async (req, res) => {
   let body_param = req.body;
-  console.log("posting")
-  if(body_param.object){
-      if(body_param.entry ){
-              let phone_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
-              let from = body_param.entry[0].changes[0].value.messages[0].from;
-              let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
-              
-         console.log(from)
-             
-              axios({
-                  method:"POST",
-                  url:"https://graph.facebook.com/v16.0/"+phone_no_id+"/messages?access_token="+token,
-                  data:{
-                      "messaging_product": "whatsapp",    
-                      "recipient_type": "individual",
-                      "to": from,
-                      "type": "text",
-                      "text": {
-                          "preview_url": false,
-                          "body": "bi"
-                      },
-                      headers:{
-                          "Content-Type":"application/json"
-                      }
-                  }
-              });
-              res.sendStatus(200);
-          }else{
-              res.sendStatus(404);
-          }
+  console.log('posting');
+  if (body_param.object) {
+    if (body_param.entry) {
+      let phone_no_id = body_param.entry[0].changes[0].value.metadata.phone_number_id;
+      let from = body_param.entry[0].changes[0].value.messages[0].from;
+      let msg_body = body_param.entry[0].changes[0].value.messages[0].text.body;
+
+      console.log(from);
+
+      // Emit msg_body using Socket.IO
+      io.emit('message', msg_body);
+
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   }
-})
+});
+
 
 app.post('/send-message', async (req, res) => {
   try {
@@ -129,7 +133,7 @@ app.get('/', (req, res) => {
     `);
 });
 
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log('Backend server is running!');
 });
 
