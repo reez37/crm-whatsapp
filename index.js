@@ -6,7 +6,12 @@ require('dotenv').config();
 const app = express().use(body_parser.json());
 const cors = require('cors');
 const http = require('http').createServer(app);
-const io = require('socket.io')(http); // Import Socket.IO and set up with the HTTP server
+const io = require('socket.io')(http , {
+  cors: {
+    origin: 'http://localhost:3000', // your client's address
+    credentials: true,
+  },
+}); // Import Socket.IO and set up with the HTTP server
 
 const token = process.env.TOKEN;
 const mytoken = process.env.MYTOKEN;
