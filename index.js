@@ -8,7 +8,7 @@ const cors = require('cors');
 const http = require('http').createServer(app);
 const io = require('socket.io')(http , {
   cors: {
-    origin: 'http://localhost:3000', // your client's address
+    origin: '*', // your client's address
     credentials: true,
   },
 }); // Import Socket.IO and set up with the HTTP server
@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 8800;
 
 app.use(
   cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000','https://crm-client-production-2657.up.railway.app/'],
     credentials: true,
   })
 );
